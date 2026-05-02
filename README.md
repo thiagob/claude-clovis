@@ -114,7 +114,13 @@ docker compose up -d
 
 Open Telegram and send any message to your bot. It will reply with a pairing code.
 
-Back inside the container (`docker compose run --rm agent`), approve the code and enable the allowlist:
+Attach to the running container and open a Claude Code session:
+
+```bash
+docker compose run --rm agent
+```
+
+Once inside the Claude Code prompt (not your bash shell), run:
 
 ```
 /telegram:access pair <code>
