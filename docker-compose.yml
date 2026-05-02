@@ -1,0 +1,15 @@
+services:
+  claude-clovis:
+    build: .
+    container_name: claude-clovis
+    restart: unless-stopped
+    stdin_open: true       # Claude expects a TTY-ish stdin
+    tty: true              # without these the process exits immediately
+    volumes:
+      - ./data/config:/home/claude/.claude  # OAuth + telegram pairing + sessions
+      - ./data/claude.json:/home/claude/.claude.json  # wizard state + theme
+      - ./data/workspace:/workspace               # what Claude operates on
+    environment:
+      TZ: America/Sao_Paulo
+      TODOIST_API_TOKEN: ${TODOIST_API_TOKEN}
+      CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN}
