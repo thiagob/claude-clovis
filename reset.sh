@@ -15,10 +15,4 @@ docker compose down 2>/dev/null || true
 # Wipe auth, sessions, plugins, and wizard state
 sudo rm -rf data/config data/claude.json
 
-# Recreate with correct structure and permissions
-mkdir -p data/config
-touch data/claude.json
-sudo chown -R 1001:1001 data/config data/claude.json
-
-echo "Reset complete. Run ./setup.sh if you also need to reconfigure .env, or go straight to:"
-echo "  docker compose run --rm claude-${BOT_NAME:-clovis}"
+echo "Reset complete. Run ./setup.sh to reinitialize."
