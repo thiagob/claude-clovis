@@ -104,9 +104,30 @@ Once inside, install and configure the Telegram plugin:
 /telegram:configure <your-botfather-token>
 ```
 
+Exit with Ctrl+C, then start the container in the background:
+
+```bash
+docker compose up -d
+```
+
+### 6. Pair your Telegram account and lock down access
+
+Open Telegram and send any message to your bot. It will reply with a pairing code.
+
+Back inside the container (`docker compose run --rm agent`), approve the code and enable the allowlist:
+
+```
+/telegram:access pair <code>
+/telegram:access policy allowlist
+```
+
+The allowlist is critical: without it, anyone who finds your bot's username can send it messages and interact with your agent. Once enabled, only paired accounts are allowed — everyone else is silently dropped.
+
+See the [official channels documentation](https://code.claude.com/docs/en/channels#security) for full details on how the sender allowlist works.
+
 Exit with Ctrl+C. All state is saved to `./data/` and persists across restarts.
 
-### 6. Run in the background
+### 7. Run in the background
 
 ```bash
 docker compose up -d
