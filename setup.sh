@@ -31,4 +31,4 @@ fi
 
 echo "Setup complete. Edit .env with your tokens, then run:"
 echo "  docker compose build"
-echo "  docker compose run --rm claude-${bot_name}"
+echo "  docker compose run --rm agent"

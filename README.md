@@ -83,7 +83,7 @@ claude setup-token
 
 ```bash
 docker compose build
-docker compose run --rm claude-clovis
+docker compose run --rm agent
 ```
 
 On first start Claude Code will:

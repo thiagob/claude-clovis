@@ -1,5 +1,5 @@
 services:
-  claude-clovis:
+  agent:
     build: .
     container_name: claude-${BOT_NAME:-clovis}
     restart: unless-stopped
