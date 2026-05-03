@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-`claude-clovis` runs Claude Code as a persistent Docker container reachable via Telegram. It is a shell — infrastructure only. The actual work happens in a separate `clovis-workspace` repo mounted at `./data/workspace`.
+`open-clovis` runs Claude Code as a persistent Docker container reachable via Telegram. It is a shell — infrastructure only. The actual work happens in a separate `clovis-workspace` repo mounted at `./data/workspace`.
 
 Two-repo model:
-- `claude-clovis` — container, auth, Telegram config (this repo, managed from the host)
+- `open-clovis` — container, auth, Telegram config (this repo, managed from the host)
 - `clovis-workspace` — git repo Claude operates on (mounted at `/workspace` inside the container)
 
 ## Key files
@@ -16,7 +16,7 @@ Two-repo model:
 |---|---|
 | `Dockerfile` | Builds the image: node:22, Bun, Claude Code, gh CLI |
 | `entrypoint.sh` | Configures git credentials from `GITHUB_TOKEN`, then starts `claude --channels` |
-| `docker-compose.yml` | Single service `agent`, container named `claude-${BOT_NAME}` |
+| `docker-compose.yml` | Single service `agent`, container named `open-clovis-${BOT_NAME}` |
 | `setup.sh` | First-time setup: creates `data/`, sets UID 1001 ownership, bootstraps `.env` |
 | `reset.sh` | Wipes `data/config` and `data/claude.json` for a clean re-run of setup |
 
