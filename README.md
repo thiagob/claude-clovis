@@ -1,4 +1,4 @@
-# claude-clovis
+# open-clovis
 
 Clovis is a persistent AI agent built on [Claude Code](https://claude.ai/code), reachable via Telegram. It runs as a Docker container and operates on a dedicated git workspace.
 
@@ -27,11 +27,11 @@ Clovis is the alternative: the same concept, but self-hosted, small, and built o
 An agent instance is made of two repos:
 
 ```
-claude-clovis       ← the shell: container, auth, Telegram, config
+open-clovis         ← the shell: container, auth, Telegram, config
 clovis-workspace    ← the workspace: git repo Clovis reads and writes
 ```
 
-**`claude-clovis`** (this repo) is the environment — it defines how the agent runs, how it authenticates, and how it connects to Telegram. You manage this from the host.
+**`open-clovis`** (this repo) is the environment — it defines how the agent runs, how it authenticates, and how it connects to Telegram. You manage this from the host.
 
 **`clovis-workspace`** is where Clovis does its work — a regular git repo mounted into the container at `/workspace`. Clovis can read files, write code, make commits, and push. You review what it did via git history.
 
@@ -56,7 +56,7 @@ mkdir clovis && cd clovis
 Download it from this repo:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/thiagob/claude-clovis/main/docker-compose.yml -o docker-compose.yml
+curl -fsSL https://raw.githubusercontent.com/open-clovis/open-clovis/main/docker-compose.yml -o docker-compose.yml
 ```
 
 ### 3. Create the data layout
@@ -164,8 +164,8 @@ To modify the container itself, clone the repo and use `setup.sh` to automate st
 ### 1. Clone this repo
 
 ```bash
-git clone https://github.com/thiagob/claude-clovis.git
-cd claude-clovis
+git clone https://github.com/open-clovis/open-clovis.git
+cd open-clovis
 ```
 
 ### 2. Run setup
@@ -180,7 +180,7 @@ The script prompts for bot name and Telegram token, creates the data layout, set
 
 | Variable | Required | Description |
 |---|---|---|
-| `BOT_NAME` | Yes | Agent name — sets the Docker container name to `claude-<name>` |
+| `BOT_NAME` | Yes | Agent name — sets the Docker container name to `open-clovis-<name>` |
 | `CLAUDE_CODE_OAUTH_TOKEN` | Yes | Long-lived auth token from `claude setup-token` |
 | `TELEGRAM_BOT_TOKEN` | Yes | Bot token from @BotFather |
 | `GITHUB_TOKEN` | No | GitHub PAT ([create one](https://github.com/settings/tokens)) — enables `git push` from the workspace |

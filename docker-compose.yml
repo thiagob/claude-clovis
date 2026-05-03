@@ -1,7 +1,7 @@
 services:
   agent:
-    build: https://github.com/thiagob/claude-clovis.git
-    container_name: claude-${BOT_NAME:-clovis}
+    build: https://github.com/open-clovis/open-clovis.git
+    container_name: open-clovis-${BOT_NAME:-clovis}
     restart: unless-stopped
     stdin_open: true       # Claude expects a TTY-ish stdin
     tty: true              # without these the process exits immediately
