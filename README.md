@@ -195,7 +195,8 @@ The script prompts for bot name and Telegram token, creates the data layout, set
 ## Commands
 
 ```bash
-docker compose logs -f     # follow logs
-docker compose down        # stop (state preserved in ./data/)
-docker compose up -d       # restart
+docker compose run --rm agent   # interactive session (first-time wizard, pairing)
+docker compose up -d            # start in background
+docker compose logs -f          # follow logs
+docker compose down             # stop (state preserved in ./data/)
 ```
