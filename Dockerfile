@@ -1,6 +1,6 @@
 FROM node:22-bookworm-slim
 
-# Bun is required for the channels MCP server
+# Bun is required for the Telegram plugin MCP server
 RUN apt-get update && apt-get install -y --no-install-recommends \
         curl ca-certificates git tini unzip \
     && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
@@ -15,20 +15,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN curl -fsSL https://bun.sh/install | BUN_INSTALL=/usr/local bash \
     && ln -sf /usr/local/bin/bun /usr/bin/bun
 
-# Install Claude Code and give the claude user ownership so it can self-update
+# Install Claude Code and give the clovis user ownership so it can self-update
 RUN npm install -g @anthropic-ai/claude-code \
     && chown -R 1001:1001 /usr/local/lib/node_modules/@anthropic-ai \
     && chown 1001:1001 /usr/local/bin/claude
 
 # Run as non-root for safety
-RUN useradd -m -u 1001 claude
+RUN useradd -m -u 1001 clovis
 
-COPY --chown=claude:claude entrypoint.sh /entrypoint.sh
+COPY --chown=clovis:clovis entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-USER claude
-WORKDIR /workspace
+USER clovis
+WORKDIR /home/clovis
 
-# tini reaps zombies; Bun spawns subprocesses for the channel MCP
+# tini reaps zombies; Bun spawns subprocesses for the Telegram plugin MCP server
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/entrypoint.sh"]
