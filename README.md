@@ -33,15 +33,15 @@ clovis-workspace    ← the workspace: git repo Clovis reads and writes
 
 **`open-clovis`** (this repo) is the environment — it defines how the agent runs, how it authenticates, and how it connects to Telegram. You manage this from the host.
 
-**`clovis-workspace`** is where Clovis does its work — a regular git repo mounted into the container at `/workspace`. Clovis can read files, write code, make commits, and push. You review what it did via git history.
+**`clovis-workspace`** is where Clovis does its work — a regular git repo mounted into the container at `/home/claude`. Clovis can read files, write code, make commits, and push. You review what it did via git history.
 
 This separation keeps infra concerns out of the workspace and gives Clovis a clean, auditable place to operate.
 
 ## How it works
 
-The container installs Claude Code and starts it with the `--channels` flag, loading the official Telegram plugin (`plugin:telegram@claude-plugins-official`). [Bun](https://bun.sh) is required by the channels MCP server and is installed system-wide. [tini](https://github.com/krallin/tini) is used as PID 1 to reap zombie processes that Bun spawns.
+At startup, the entrypoint registers the official plugin marketplace (`anthropics/claude-plugins-official`) and installs the Telegram plugin — both steps are idempotent and complete in under a second once the data volume is populated. [Bun](https://bun.sh) is required by the Telegram plugin's MCP server and is installed system-wide. [tini](https://github.com/krallin/tini) is used as PID 1 to reap zombie processes that Bun spawns.
 
-> **Note:** The Telegram channels feature requires a compatible Claude plan (Pro, Max, Team, or Enterprise).
+> **Note:** The Telegram plugin requires a compatible Claude plan (Pro, Max, Team, or Enterprise).
 
 ## Setup
 
@@ -62,12 +62,9 @@ curl -fsSL https://raw.githubusercontent.com/open-clovis/open-clovis/main/docker
 ### 3. Create the data layout
 
 ```bash
-mkdir -p data/config data/workspace
-touch data/claude.json
+mkdir -p data/workspace
 sudo chown -R 1001:1001 data/
 ```
-
-`data/claude.json` must be created as a file before the first run — Docker would otherwise create it as a directory, which breaks Claude Code.
 
 ### 4. Set up the workspace
 
@@ -111,18 +108,11 @@ docker compose run --rm agent
 ```
 
 On first start Claude Code will:
-1. Warn that `.claude.json` contains invalid JSON — choose **Reset with default configuration**
-2. Ask you to select a login method — choose **Claude account with subscription**
-3. Show a URL to complete OAuth in your browser
-4. Show a theme/onboarding wizard — complete it fully before exiting
+1. Ask you to select a login method — choose **Claude account with subscription**
+2. Show a URL to complete OAuth in your browser
+3. Show a theme/onboarding wizard — complete it fully before exiting
 
-Once inside, install the Telegram plugin:
-
-```
-/plugin install telegram@claude-plugins-official
-```
-
-> If you set `TELEGRAM_BOT_TOKEN` in `.env`, the plugin picks it up automatically and no further configuration is needed. If you skipped that env var, run `/telegram:configure <your-botfather-token>` before exiting.
+> If you set `TELEGRAM_BOT_TOKEN` in `.env`, the plugin picks it up automatically. If you skipped that env var, run `/telegram:configure <your-botfather-token>` before exiting.
 
 Exit with Ctrl+C.
 
@@ -145,7 +135,7 @@ Once inside the Claude Code prompt (not your bash shell), run:
 
 The allowlist is critical: without it, anyone who finds your bot's username can send it messages and interact with your agent. Once enabled, only paired accounts are allowed — everyone else is silently dropped.
 
-See the [official channels documentation](https://code.claude.com/docs/en/channels#security) for full details on how the sender allowlist works.
+See the [Claude Code documentation](https://code.claude.com/docs/en/overview) for full details on how the sender allowlist works.
 
 Exit with Ctrl+C. All state is saved to `./data/` and persists across restarts.
 
@@ -190,11 +180,7 @@ The script prompts for bot name and Telegram token, creates the data layout, set
 
 | Host path | Container path | Purpose |
 |---|---|---|
-| `./data/config` | `/home/claude/.claude` | OAuth tokens, Telegram pairing, sessions, plugins |
-| `./data/claude.json` | `/home/claude/.claude.json` | Wizard state, theme preference |
-| `./data/workspace` | `/workspace` | The workspace repo Clovis operates on |
-
-> `./data/claude.json` must exist as a **file** before the first run — Docker creates missing bind-mount targets as directories, which breaks Claude Code. Step 3 above handles this with `touch`.
+| `./data/workspace` | `/home/claude` | Workspace repo Clovis operates on — `.claude/` config and `.claude.json` live here too, gitignored automatically |
 
 ## Commands
 

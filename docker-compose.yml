@@ -1,14 +1,12 @@
 services:
   agent:
-    build: https://github.com/open-clovis/open-clovis.git
+    build: .
     container_name: open-clovis-${BOT_NAME:-clovis}
     restart: unless-stopped
     stdin_open: true       # Claude expects a TTY-ish stdin
     tty: true              # without these the process exits immediately
     volumes:
-      - ./data/config:/home/claude/.claude  # OAuth + telegram pairing + sessions
-      - ./data/claude.json:/home/claude/.claude.json  # wizard state + theme
-      - ./data/workspace:/workspace               # what Claude operates on
+      - ./data/workspace:/home/clovis  # home dir = workspace repo (holds .claude/ config + .claude.json)
     environment:
       TZ: America/Sao_Paulo
       CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN}

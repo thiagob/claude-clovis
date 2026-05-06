@@ -8,13 +8,10 @@ if [ -z "$bot_name" ]; then
   exit 1
 fi
 
-# Create data directories and files (sudo needed if data/ is root-owned from a previous run)
-sudo mkdir -p data/config data/workspace
-# Docker auto-creates missing bind-mount targets as directories; fix that
-[ -d data/claude.json ] && sudo rm -rf data/claude.json
-sudo touch data/claude.json
+# Create data directory (sudo needed if data/ is root-owned from a previous run)
+sudo mkdir -p data/workspace
 
-# Set ownership to match the container's claude user (UID 1001)
+# Set ownership to match the container's clovis user (UID 1001)
 sudo chown -R 1001:1001 data/
 
 # Bootstrap .env from example if not present
