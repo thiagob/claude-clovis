@@ -2,33 +2,5 @@
   "attribution": {
     "commit": "",
     "pr": ""
-  },
-  "permissions": {
-    "allow": [
-      "Bash(rm -f /opt/docker/open-clovis/data/workspace/.claude.json)",
-      "Bash(docker compose *)",
-      "Bash(sudo rm *)",
-      "Bash(npm view *)",
-      "Bash(xargs ls *)",
-      "Bash(xargs cat *)",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.keys\\(\\)\\)\\)\")",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.keys\\(\\)\\)[:10]\\)\")",
-      "Bash(git -C /opt/docker/open-clovis log --oneline -10)",
-      "Bash(git -C /opt/docker/open-clovis log --oneline --all)",
-      "Bash(git -C /opt/docker/open-clovis diff HEAD~1 HEAD -- entrypoint.sh README.md Dockerfile)",
-      "Read(//usr/local/lib/node_modules/@anthropic-ai/**)",
-      "Read(//usr/local/**)",
-      "Bash(claude --version)",
-      "Bash(docker run *)",
-      "Bash(echo \"--- exit $? ---\")",
-      "Bash(git -C /opt/docker/open-clovis status)",
-      "Bash(git -C /opt/docker/open-clovis diff)",
-      "Bash(git -C /opt/docker/open-clovis add CLAUDE.md Dockerfile README.md docker-compose.yml entrypoint.sh reset.sh setup.sh .claude/settings.json)",
-      "Bash(git -C /opt/docker/open-clovis commit -m ' *)",
-      "Bash(grep -E \"^d|\\\\.md$\")",
-      "Bash(git -C /home/thiagob/github/open-clovis status)",
-      "Bash(git -C /home/thiagob/github/open-clovis diff)",
-      "Bash(git -C /home/thiagob/github/open-clovis log --oneline -5)"
-    ]
   }
 }
