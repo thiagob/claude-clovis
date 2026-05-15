@@ -14,11 +14,15 @@ services:
       CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      N8N_MCP_TOKEN: ${N8N_MCP_TOKEN:-}
       # Uncomment each line after creating the matching n8n workflow (see CLAUDE.md)
       #N8N_MCP_GMAIL: http://n8n:5678/mcp/your-gmail-webhook-id
       #N8N_MCP_GCAL: http://n8n:5678/mcp/your-gcal-webhook-id
       #N8N_MCP_WAHA: http://n8n:5678/mcp/your-waha-webhook-id
       #N8N_MCP_TODOIST: http://n8n:5678/mcp/your-todoist-webhook-id
+    depends_on:
+      n8n:
+        condition: service_healthy
     networks:
       - clovis-net
 
@@ -35,6 +39,12 @@ services:
       GENERIC_TIMEZONE: America/Sao_Paulo
       N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
       N8N_SECURE_COOKIE: "false"  # required when accessing over plain HTTP
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5678/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     networks:
       - clovis-net
 

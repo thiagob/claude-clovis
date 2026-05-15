@@ -25,12 +25,18 @@ fi
 # URLs are set directly in docker-compose.yml (no secrets, internal network only).
 _SETTINGS="${HOME}/.claude/settings.json"
 if [ -f "$_SETTINGS" ] && command -v jq > /dev/null 2>&1; then
-  env | grep '^N8N_MCP_' | while IFS='=' read -r _key _url; do
+  env | grep '^N8N_MCP_' | grep -v '^N8N_MCP_TOKEN=' | while IFS='=' read -r _key _url; do
     [ -z "$_url" ] && continue
     _name="n8n-$(echo "$_key" | sed 's/^N8N_MCP_//' | tr '[:upper:]' '[:lower:]')"
     _tmp=$(mktemp)
-    jq --arg n "$_name" --arg u "$_url" \
-      '.mcpServers[$n] = {"type": "http", "url": $u}' "$_SETTINGS" > "$_tmp" && mv "$_tmp" "$_SETTINGS"
+    if [ -n "${N8N_MCP_TOKEN:-}" ]; then
+      jq --arg n "$_name" --arg u "$_url" --arg t "$N8N_MCP_TOKEN" \
+        '.mcpServers[$n] = {"type": "sse", "url": $u, "headers": {"Authorization": ("Bearer " + $t)}}' \
+        "$_SETTINGS" > "$_tmp" && mv "$_tmp" "$_SETTINGS"
+    else
+      jq --arg n "$_name" --arg u "$_url" \
+        '.mcpServers[$n] = {"type": "sse", "url": $u}' "$_SETTINGS" > "$_tmp" && mv "$_tmp" "$_SETTINGS"
+    fi
     echo "entrypoint: registered MCP server '$_name' → $_url"
   done
 fi
