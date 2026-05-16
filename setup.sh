@@ -50,6 +50,10 @@ prompt_var TELEGRAM_BOT_TOKEN      "Telegram bot token (from @BotFather, blank t
 prompt_var GITHUB_TOKEN            "GitHub token (blank to skip)"
 
 prompt_var WAHA_API_KEY             "Waha API key (blank to disable auth)"
+prompt_var WAHA_SESSION              "Waha session name"
+prompt_var WAHA_DASHBOARD_USERNAME   "Waha dashboard username"
+generate_if_empty WAHA_DASHBOARD_PASSWORD
+generate_if_empty WHATSAPP_SWAGGER_PASSWORD
 
 generate_if_empty N8N_ENCRYPTION_KEY
 

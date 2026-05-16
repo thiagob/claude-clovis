@@ -14,6 +14,9 @@ services:
       CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      WAHA_API_KEY: ${WAHA_API_KEY:-}
+      WAHA_URL: http://waha:3000
+      WAHA_SESSION: ${WAHA_SESSION:-}
     depends_on:
       n8n:
         condition: service_healthy
@@ -52,6 +55,11 @@ services:
       - ./waha-data:/app/.waha/sessions
     environment:
       WHATSAPP_API_KEY: ${WAHA_API_KEY:-}
+      WAHA_DASHBOARD_USERNAME: ${WAHA_DASHBOARD_USERNAME:-}
+      WAHA_DASHBOARD_PASSWORD: ${WAHA_DASHBOARD_PASSWORD:-}
+      WHATSAPP_SWAGGER_USERNAME: ${WHATSAPP_SWAGGER_USERNAME:-}
+      WHATSAPP_SWAGGER_PASSWORD: ${WHATSAPP_SWAGGER_PASSWORD:-}
+      WAHA_APPS_ENABLED: True
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
       interval: 30s

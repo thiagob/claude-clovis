@@ -2,4 +2,6 @@
 data/
 .claude/settings.local.json
 client_secret*.json
-n8n-data/waha-data/
+n8n-data/
+waha-data/
+*.patch

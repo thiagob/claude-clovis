@@ -21,6 +21,8 @@ Clovis is the alternative: the same concept, but self-hosted, small, and built o
 - **Granular access control** — each MCP tool restricted to read-only by default, so the agent can read your emails without being able to send them, read your calendar without creating events. You decide what it can touch.
 
 > **Compliance note:** Clovis is designed for personal use. If you are considering using it in a work context, your organization may have data governance policies, corporate IT requirements, or regulatory obligations (GDPR, HIPAA, SOC 2, etc.) that govern what tools can access company data. Evaluate accordingly — personal and professional contexts carry very different rules.
+>
+> **Anthropic Terms of Service:** `CLAUDE_CODE_OAUTH_TOKEN` is a personal OAuth token from your Claude subscription. open-clovis passes it directly to the official `claude` CLI — which is the intended use. The [Consumer Terms of Service](https://www.anthropic.com/legal/consumer-terms) (§2) prohibit sharing account credentials with anyone else, and (§3) prohibit accessing services through automated means except via an API key. open-clovis does neither: it runs the official `claude` binary and each user supplies their own token. What those clauses rule out is building tools that use someone else's subscription token to call Anthropic's API — open-clovis is not that. That said, before running it is worth reviewing your intended use case against the Consumer Terms — if your usage goes beyond personal, interactive use (e.g. fully automated pipelines, team-shared instances, or commercial workflows), switching to a proper Anthropic API key under the Commercial Terms is the safer path.
 
 ## Concept
 
@@ -42,6 +44,30 @@ This separation keeps infra concerns out of the workspace and gives Clovis a cle
 At startup, the entrypoint registers the official plugin marketplace (`anthropics/claude-plugins-official`) and installs the Telegram plugin — both steps are idempotent and complete in under a second once the data volume is populated. [Bun](https://bun.sh) is required by the Telegram plugin's MCP server and is installed system-wide. [tini](https://github.com/krallin/tini) is used as PID 1 to reap zombie processes that Bun spawns.
 
 n8n runs as a sidecar container and exposes third-party service integrations (Gmail, Google Calendar, Todoist, WhatsApp, and others) as MCP servers that Claude picks up automatically on start.
+
+```
+                      Telegram API
+                           │
+                           ▼
+ ┌─────────────────────────────────────────────── clovis-net ───────────────────────────────────┐
+ │                                                                                               │
+ │  ┌──────────────────────────────────────────────────┐                                        │
+ │  │                     agent                         │  MCP (HTTP)   ┌──────────────────────┐│
+ │  │                                                   │ ────────────► │         n8n          ││
+ │  │  Telegram MCP plugin  ◄──►  Claude Code           │               │  :5678               ││──► Google, Gmail
+ │  │                                                   │ ◄──────────── │  workflow MCPs       ││    Todoist, ...
+ │  │  workspace/  (clovis-workspace, mounted volume)   │               └──────────────────────┘│
+ │  │                                                   │  HTTP API     ┌──────────────────────┐│
+ │  └───────────────────────────────────────────────────┘ ────────────► │        waha          ││
+ │                                                                       │  :3000               ││──► WhatsApp
+ │                                                                       └──────────────────────┘│
+ └───────────────────────────────────────────────────────────────────────────────────────────────┘
+       │ ./data/                                            │ ./n8n-data/      │ ./waha-data/
+       ▼ (workspace, .claude/ config)                       ▼ (workflows)      ▼ (WA sessions)
+                                            host filesystem  (all gitignored)
+
+  Host browser ─────────────────────────────────────────────► :5678 n8n UI  │  :3000 Waha UI
+```
 
 > **Note:** The Telegram plugin requires a compatible Claude plan (Pro, Max, Team, or Enterprise).
 
